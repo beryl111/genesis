@@ -117,15 +117,24 @@ def _find(todos: list[dict], todo_id: int) -> dict:
     raise TodoError(f"找不到编号为 {todo_id} 的待办")
 
 
+def _display_width(text: str) -> int:
+    return sum(2 if ord(char) > 127 else 1 for char in text)
+
+
+def _pad(text: object, width: int) -> str:
+    value = str(text)
+    return value + " " * max(width - _display_width(value), 0)
+
+
 def _print_todos(todos: list[dict]) -> None:
     if not todos:
         print("暂无待办事项。")
         return
-    print(f"{'编号':<6}{'状态':<8}{'内容'}")
+    print(f"{_pad('编号', 8)}{_pad('状态', 10)}内容")
     print("-" * 40)
     for item in todos:
         status = "已完成" if item.get("done") else "未完成"
-        print(f"{item['id']:<6}{status:<8}{item['title']}")
+        print(f"{_pad(item['id'], 8)}{_pad(status, 10)}{item['title']}")
 
 
 def _build_parser() -> argparse.ArgumentParser:
